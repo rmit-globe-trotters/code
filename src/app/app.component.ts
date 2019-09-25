@@ -7,4 +7,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'code';
+  loggedIn: boolean;
+
+  loginSuccess(value){
+    this.loggedIn = true;
+  }
+
+  loginFailure(value){
+    this.loggedIn = false;
+  }
 }
