@@ -18,7 +18,6 @@ export class LoggedInGuard implements CanActivate {
       return this.afAuth.authState.pipe(
         first(),
         tap(user => {
-          console.log({u: user});
           if (!user) {
             return this.router.navigate(['login']);
           }

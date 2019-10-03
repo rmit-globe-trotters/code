@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
 import { Subject } from 'rxjs';
 
@@ -7,9 +6,4 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  public onLoginStateChanged = new Subject<User>();
-  
-  public logout(){
-    //this.afAuth.auth.signOut();
-  }
 }

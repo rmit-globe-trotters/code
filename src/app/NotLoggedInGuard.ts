@@ -13,7 +13,6 @@ export class NotLoggedInGuard implements CanActivate {
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.afAuth.authState.pipe(first(), tap(user => {
-      console.log({ u: user });
       if (user) {
         return this.router.navigateByUrl('/');
       }

@@ -19,8 +19,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
 @NgModule({
   declarations: [LoginComponent],
   imports: [
-    CommonModule, 
-    NgbModule, 
+    CommonModule,
+    NgbModule,
     CoreRoutingModule,
     FirebaseUIModule.forFeature(firebaseUiAuthConfig),
   ]
