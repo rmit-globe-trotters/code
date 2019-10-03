@@ -11,12 +11,15 @@ import { AppComponent } from './app.component';
 // - https://github.com/RaphaelJenni/FirebaseUI-Angular/issues/76
 // the plugin exposes the two libraries as well. You can use those:
 import {FirebaseUIModule, firebase, firebaseui} from 'firebaseui-angular';
- 
- 
+
+
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
- 
+import { HomeComponent } from './home/home.component';
+import { LoggedInGuard } from './logged-in.guard';
+import { CoreModule } from './core/core.module';
+
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
   signInOptions: [
@@ -30,16 +33,18 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
-    FirebaseUIModule.forRoot(firebaseUiAuthConfig)
+    FirebaseUIModule.forRoot(firebaseUiAuthConfig),
+    CoreModule
   ],
-  providers: [],
+  providers: [LoggedInGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

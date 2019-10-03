@@ -1,0 +1,7 @@
+<div *ngIf="error">
+    Unable to login because: {{error}}
+</div>
+
+<firebase-ui
+    (signInSuccessWithAuthResult)="loginSuccess($event)"
+    (signInFailure)="loginFailure($event)"></firebase-ui>
