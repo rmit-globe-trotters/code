@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build --prod",
     "deploy": "firebase deploy",
     "serve": "firebase serve"
   },

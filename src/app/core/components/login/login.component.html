@@ -2,6 +2,10 @@
     Unable to login because: {{error}}
 </div>
 
-<firebase-ui
-    (signInSuccessWithAuthResult)="loginSuccess($event)"
-    (signInFailure)="loginFailure($event)"></firebase-ui>
+<div class="card card-login mx-auto mt-5">
+    <div class="card-header">Login</div>
+    <div class="card-body">
+        <firebase-ui (signInSuccessWithAuthResult)="loginSuccess($event)" (signInFailure)="loginFailure($event)">
+        </firebase-ui>
+    </div>
+</div>
