@@ -1,31 +1,50 @@
-
-
 <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-    <a class="navbar-brand mr-1" href="index.html">{{title}}</a>
+    <a class="navbar-brand mr-1" routerLink="/">{{title}}</a>
 
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Navbar Search -->
-    <div class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-        <a *ngIf="loggedInUser" (click)="logout()" class="btn">Logout</a>
-    </div>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" *ngIf="loggedInUser" (click)="logout()">Logout</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" *ngIf="loggedInUser" [routerLink]="['profile']">
+                <img [src]="loggedInUser.photoURL" class="profile-photo" alt="profile image">
+            </a>
+        </li>
+    </ul>
 
 </nav>
 
-<ul class="sidebar navbar-nav">
-    <li class="nav-item active">
-        <a class="nav-link" href="index.html">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Teams</span>
-        </a>
-    </li>
-</ul>
+<div id="wrapper">
 
-<div id="content-wrapper">
-    <div class="container-fluid">
-        <router-outlet></router-outlet>
+    <ul class="sidebar navbar-nav">
+        <li class="nav-item active">
+            <a class="nav-link" routerLink="/">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" routerLink="/teams">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Teams</span>
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" routerLink="/profile">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+    </ul>
+
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>

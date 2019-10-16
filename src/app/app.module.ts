@@ -20,6 +20,7 @@ import { HomeComponent } from './home/home.component';
 import { LoggedInGuard } from './logged-in.guard';
 import { CoreModule } from './core/core.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { ProfileComponent } from './profile/profile.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -35,7 +36,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
