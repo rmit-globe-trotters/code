@@ -19,6 +19,7 @@ import { environment } from 'src/environments/environment';
 import { HomeComponent } from './home/home.component';
 import { LoggedInGuard } from './logged-in.guard';
 import { CoreModule } from './core/core.module';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -42,7 +43,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
     FirebaseUIModule.forRoot(firebaseUiAuthConfig),
-    CoreModule
+    CoreModule,
+    NgbModule
   ],
   providers: [LoggedInGuard],
   bootstrap: [AppComponent]

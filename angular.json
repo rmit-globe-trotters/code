@@ -28,8 +28,10 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/firebaseui/dist/firebaseui.css"
+              "node_modules/firebaseui/dist/firebaseui.css",
+              "src/assets/theme/css/sb-admin.min.css",
+              "src/assets/theme/vendor/fontawesome-free/css/all.min.css",
+              "src/styles.scss"
             ],
             "scripts": []
           },

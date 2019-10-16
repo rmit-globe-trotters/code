@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "~8.2.7",
     "@angular/router": "~8.2.7",
     "@ng-bootstrap/ng-bootstrap": "^5.1.1",
+    "bootstrap": "^4.3.1",
     "firebase": "^6.6.2",
     "firebaseui": "^4.2.0",
     "firebaseui-angular": "^4.0.0",
