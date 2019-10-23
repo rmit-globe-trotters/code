@@ -1,0 +1,74 @@
+<h2>Board for Project 1</h2>
+<hr />
+
+<div class="row board">
+  <div *ngFor="let group of taskGroups" class="col-4 board-col">
+    <div class="container">
+      <h3>{{ group.state }}</h3>
+      <hr />
+      <div *ngFor="let task of group.tasks" class="card row">
+        <div class="card-body">
+          <h5 class="card-title">{{ task.name }}</h5>
+          <p>Assigned to: {{ task.assignedTo || "Nobody" }}</p>
+          <button class="btn" (click)="editTask(content)">
+            <i class="fa fa-edit"></i>
+            Edit
+          </button>
+          <button class="btn" (click)="moveTask(task)">
+            <i class="fa fa-arrow-right"></i>
+            Move Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Task</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="dateOfBirth">Due Date</label>
+        <div class="input-group">
+          <input
+            id="dateOfBirth"
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            name="dp"
+            ngbDatepicker
+            #dp="ngbDatepicker"
+          />
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary calendar"
+              (click)="dp.toggle()"
+              type="button"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="modal.close('Save click')"
+    >
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<pre>{{ taskGroups | json }}</pre>

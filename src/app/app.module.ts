@@ -21,6 +21,7 @@ import { LoggedInGuard } from './logged-in.guard';
 import { CoreModule } from './core/core.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { ProfileComponent } from './profile/profile.component';
+import { BoardComponent } from './team/board/board.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -37,7 +38,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
   declarations: [
     AppComponent,
     HomeComponent,
-    ProfileComponent
+    ProfileComponent,
+    BoardComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,11 @@
-import { NgModule, Component } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { LoggedInGuard } from './logged-in.guard';
-import { ProfileComponent } from './profile/profile.component';
+import { NgModule, Component } from "@angular/core";
+import { Routes, RouterModule } from "@angular/router";
+import { HomeComponent } from "./home/home.component";
+import { LoggedInGuard } from "./logged-in.guard";
+import { ProfileComponent } from "./profile/profile.component";
+import { BoardComponent } from "./team/board/board.component";
 
-const stringEmpty = '';
+const stringEmpty = "";
 
 const routes: Routes = [
   {
@@ -16,6 +17,11 @@ const routes: Routes = [
     path: "profile",
     component: ProfileComponent,
     canActivate: [LoggedInGuard]
+  },
+  {
+    path: "board",
+    component: BoardComponent,
+    canActivate: [LoggedInGuard]
   }
 ];
 
@@ -23,4 +29,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
