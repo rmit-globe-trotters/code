@@ -4,6 +4,7 @@ import { HomeComponent } from "./home/home.component";
 import { LoggedInGuard } from "./logged-in.guard";
 import { ProfileComponent } from "./profile/profile.component";
 import { BoardComponent } from "./team/board/board.component";
+import { AddProjectComponent } from "./add-project/add-project.component";
 
 const stringEmpty = "";
 
@@ -19,8 +20,13 @@ const routes: Routes = [
     canActivate: [LoggedInGuard]
   },
   {
-    path: "board",
+    path: "board/:projectId",
     component: BoardComponent,
+    canActivate: [LoggedInGuard]
+  },
+  {
+    path: "project/add",
+    component: AddProjectComponent,
     canActivate: [LoggedInGuard]
   }
 ];

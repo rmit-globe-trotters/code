@@ -1,8 +1,8 @@
-<h2>Board for Project 1</h2>
+<h2 *ngIf="project$ | async as project">Board for {{ project.name }}</h2>
 <hr />
 
-<div class="row board">
-  <div *ngFor="let group of taskGroups" class="col-4 board-col">
+<div *ngIf="project$ | async as project" class="row board">
+  <div *ngFor="let group of taskGroups$ | async" class="col-4 board-col">
     <div class="container">
       <h3>{{ group.state }}</h3>
       <hr />
@@ -14,9 +14,9 @@
             <i class="fa fa-edit"></i>
             Edit
           </button>
-          <button class="btn">
-            <i class="fa fa-arrow-right"></i>
-            Move Next
+          <button class="btn" (click)="changeIconState(project, task)">
+            <i [class]="getStateIconClass(task)"></i>
+            {{ getStateChangeText(task) }}
           </button>
         </div>
       </div>
@@ -42,7 +42,6 @@
         <label for="dateOfBirth">Due Date</label>
         <div class="input-group">
           <input
-            id="dateOfBirth"
             class="form-control"
             placeholder="yyyy-mm-dd"
             name="dp"
@@ -71,4 +70,4 @@
   </div>
 </ng-template>
 
-<pre>{{ taskGroups | json }}</pre>
+<pre>{{ taskGroups$ | async | json }}</pre>

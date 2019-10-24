@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
 import { User } from "firebase";
+import { Project } from "../models/project.class";
+import { ProjectService } from "../services/project.service";
 
 @Component({
   selector: "app-home",
@@ -8,32 +10,19 @@ import { User } from "firebase";
   styleUrls: ["./home.component.scss"]
 })
 export class HomeComponent implements OnInit {
-  projects = [
-    {
-      name: "Project 1",
-      description:
-        "A fake project that is here to show some content on the page",
-      members: ["Luke", "John"]
-    },
-    {
-      name: "Project 2",
-      description: "A slightly different description",
-      members: ["Mohamed", "John"]
-    },
-    {
-      name: "Project 3",
-      description: "I love projects",
-      members: ["Austin", "Mohamed"]
-    }
-  ];
+  projects: Project[];
 
   loggedInUser: User;
 
-  constructor(private afAuth: AngularFireAuth) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private projectService: ProjectService
+  ) {}
 
   ngOnInit(): void {
     this.afAuth.authState.subscribe(user => {
       this.loggedInUser = user;
     });
+    this.projects = this.projectService.projects;
   }
 }
