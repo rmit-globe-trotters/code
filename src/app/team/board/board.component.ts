@@ -144,21 +144,23 @@ export class BoardComponent implements OnInit {
   }
 
   createTaskGroups(project) {
-    return this.taskService.tasks
-      .filter(t => t.projectId === project.name)
-      .reduce((acc, task) => {
-        const existingGroup = acc.find(t => t.state === task.state);
+    this.tasks = this.taskService.tasks.filter(
+      t => t.projectId === project.name
+    );
 
-        if (existingGroup) {
-          existingGroup.tasks.push(task);
-        } else {
-          acc.push({
-            state: task.state,
-            tasks: [task]
-          });
-        }
-        return acc;
-      }, createInitialGroups());
+    return this.tasks.reduce((acc, task) => {
+      const existingGroup = acc.find(t => t.state === task.state);
+
+      if (existingGroup) {
+        existingGroup.tasks.push(task);
+      } else {
+        acc.push({
+          state: task.state,
+          tasks: [task]
+        });
+      }
+      return acc;
+    }, createInitialGroups());
   }
 
   changeIconState(project, task) {
@@ -174,7 +176,7 @@ export class BoardComponent implements OnInit {
 
   showListView() {
     this.isListView = true;
-    this.tasks = this.taskService.tasks;
+    this.taskGroups$ = this.project$.pipe(map(this.createTaskGroups));
   }
 
   hideListView() {
