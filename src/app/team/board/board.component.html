@@ -1,26 +1,107 @@
 <h2 *ngIf="project$ | async as project">Board for {{ project.name }}</h2>
 <hr />
 
-<div *ngIf="project$ | async as project" class="row board">
-  <div *ngFor="let group of taskGroups$ | async" class="col-4 board-col">
-    <div class="container">
-      <h3>{{ group.state }}</h3>
-      <hr />
-      <div *ngFor="let task of group.tasks" class="card row">
-        <div class="card-body">
-          <h5 class="card-title">{{ task.name }}</h5>
-          <p>Assigned to: {{ task.assignedTo || "Nobody" }}</p>
-          <button class="btn" (click)="editTask(content)">
-            <i class="fa fa-edit"></i>
-            Edit
-          </button>
-          <button class="btn" (click)="changeIconState(project, task)">
-            <i [class]="getStateIconClass(task)"></i>
-            {{ getStateChangeText(task) }}
-          </button>
+<div class="btn-group btn-group-toggle">
+  <label class="btn-secondary" ngbButtonLabel>
+    <input
+      type="checkbox"
+      ngbButton
+      [ngModel]="!isListView"
+      (click)="hideListView()"
+    />
+    <i class="fa fa-columns"></i>
+    Board View
+  </label>
+  <label class="btn-secondary" ngbButtonLabel>
+    <input
+      type="checkbox"
+      ngbButton
+      [ngModel]="isListView"
+      (click)="showListView()"
+    />
+    <i class="fa fa-list"></i>
+    List View
+  </label>
+</div>
+
+<div *ngIf="project$ | async as project">
+  <div *ngIf="!isListView" class="row board">
+    <div *ngFor="let group of taskGroups$ | async" class="col-4 board-col">
+      <div class="container">
+        <h3>
+          {{ group.state }}
+        </h3>
+        <hr />
+        <div>
+          <div class="card">
+            <button class="btn" (click)="addTask(content, group.state)">
+              <i class="fa fa-plus"></i>
+              Add Task
+            </button>
+          </div>
+          <br />
+          <div *ngFor="let task of group.tasks" class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ task.text }}</h5>
+              <p>Assigned to: {{ task.assignedTo || "Nobody" }}</p>
+              <button class="btn" (click)="editTask(content, task)">
+                <i class="fa fa-edit"></i>
+                Edit
+              </button>
+              <button class="btn" (click)="changeIconState(project, task)">
+                <i [class]="getStateIconClass(task)"></i>
+                {{ getStateChangeText(task) }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="isListView">
+    <button
+      class="btn-primary float-right"
+      (click)="addTask(content, states.NotStarted)"
+    >
+      <i class="fa fa-plus"></i>
+      Add Task
+    </button>
+    <table class="table responsive">
+      <thead>
+        <tr>
+          <th>
+            Text
+          </th>
+          <th>
+            Description
+          </th>
+          <th>
+            State
+          </th>
+          <th>
+            Edit
+          </th>
+        </tr>
+        <tr *ngFor="let task of tasks">
+          <td>
+            {{ task.text }}
+          </td>
+          <td>
+            {{ task.description }}
+          </td>
+          <td>
+            {{ task.state }}
+          </td>
+          <td>
+            <button class="btn" (click)="editTask(content, task)">
+              <i class="fa fa-edit"></i>
+              Edit
+            </button>
+          </td>
+        </tr>
+      </thead>
+    </table>
   </div>
 </div>
 
@@ -37,37 +118,43 @@
     </button>
   </div>
   <div class="modal-body">
-    <form>
+    <form [formGroup]="taskForm">
       <div class="form-group">
-        <label for="dateOfBirth">Due Date</label>
-        <div class="input-group">
-          <input
-            class="form-control"
-            placeholder="yyyy-mm-dd"
-            name="dp"
-            ngbDatepicker
-            #dp="ngbDatepicker"
-          />
-          <div class="input-group-append">
-            <button
-              class="btn btn-outline-secondary calendar"
-              (click)="dp.toggle()"
-              type="button"
-            ></button>
-          </div>
-        </div>
+        <label for="name">Name</label>
+        <input
+          class="form-control"
+          formControlName="text"
+          placeholder="The name of the task"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="name">State</label>
+        <select class="form-control" formControlName="state" required>
+          <option [value]="states.NotStarted">Not Started</option>
+          <option [value]="states.InProgress">In Progress</option>
+          <option [value]="states.Done">Done</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          cols="30"
+          rows="10"
+          class="form-control"
+          placeholder="A short description of the task"
+          formControlName="description"
+        ></textarea>
       </div>
     </form>
   </div>
   <div class="modal-footer">
     <button
-      type="button"
-      class="btn btn-outline-dark"
-      (click)="modal.close('Save click')"
+      (click)="saveTask()"
+      class="btn btn-primary"
+      [disabled]="!taskForm.valid"
     >
       Save
     </button>
   </div>
 </ng-template>
-
-<pre>{{ taskGroups$ | async | json }}</pre>

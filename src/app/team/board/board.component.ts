@@ -6,9 +6,10 @@ import { map, tap } from "rxjs/operators";
 import { TaskService } from "src/app/services/task.service";
 import { Task } from "src/app/models/task.class";
 import { TaskState } from "src/app/models/task-state.enum";
-import { groupBy } from "ramda";
+import { mergeDeepRight } from "ramda";
 import { Observable, of } from "rxjs";
 import { Project } from "src/app/models/project.class";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 
 interface TaskGroup {
   state: TaskState;
@@ -29,6 +30,15 @@ const createInitialGroups = (): TaskGroup[] => [
 export class BoardComponent implements OnInit {
   project$: Observable<Project>;
   taskGroups$: Observable<TaskGroup[]>;
+  states = TaskState;
+  selectedTask: Task;
+  taskForm = new FormGroup({
+    text: new FormControl("", Validators.required),
+    state: new FormControl("", Validators.required),
+    description: new FormControl("")
+  });
+  isListView = false;
+  tasks: Task[];
 
   constructor(
     private projectService: ProjectService,
@@ -37,8 +47,63 @@ export class BoardComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  editTask(content) {
-    this.modalService.open(content, { ariaLabelledBy: "modal-basic-title" });
+  addTask(content, state: TaskState) {
+    this.selectedTask = null;
+    this.taskForm.setValue({
+      text: null,
+      description: null,
+      state
+    });
+
+    this.modalService.open(content, {
+      ariaLabelledBy: "modal-basic-title",
+      size: "lg"
+    });
+  }
+
+  editTask(content, task: Task) {
+    this.selectedTask = task;
+    this.taskForm.setValue({
+      text: task.text,
+      description: task.description,
+      state: task.state
+    });
+
+    this.modalService.open(content, {
+      ariaLabelledBy: "modal-basic-title",
+      size: "lg"
+    });
+  }
+
+  saveTask() {
+    const updatedTask = mergeDeepRight(this.selectedTask, this.taskForm.value);
+    const resetState = () => {
+      this.taskForm.setValue({
+        text: "",
+        description: "",
+        state: ""
+      });
+      this.selectedTask = null;
+      this.modalService.dismissAll();
+      this.taskGroups$ = this.project$.pipe(
+        map(project => this.createTaskGroups(project))
+      );
+    };
+
+    if (this.selectedTask) {
+      this.taskService.updateTask(updatedTask).then(resetState);
+    } else {
+      this.project$.subscribe(project => {
+        updatedTask.projectId = project.name;
+        this.taskService.addTask(updatedTask);
+        this.taskGroups$ = of(this.createTaskGroups(project));
+        resetState();
+      });
+    }
+  }
+
+  closeModal(modal) {
+    modal.dismiss("Closing model without saving");
   }
 
   ngOnInit() {
@@ -47,8 +112,7 @@ export class BoardComponent implements OnInit {
         return this.projectService.projects.find(
           p => p.name === params.get("projectId")
         );
-      }),
-      tap()
+      })
     );
     this.taskGroups$ = this.project$.pipe(
       map(project => this.createTaskGroups(project))
@@ -106,5 +170,14 @@ export class BoardComponent implements OnInit {
       task.state = TaskState.InProgress;
     }
     this.taskGroups$ = of(this.createTaskGroups(project));
+  }
+
+  showListView() {
+    this.isListView = true;
+    this.tasks = this.taskService.tasks;
+  }
+
+  hideListView() {
+    this.isListView = false;
   }
 }
