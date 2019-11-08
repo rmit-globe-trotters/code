@@ -1,15 +1,15 @@
-import { Component, OnInit } from "@angular/core";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ActivatedRoute, ParamMap } from "@angular/router";
-import { ProjectService } from "src/app/services/project.service";
-import { map, tap } from "rxjs/operators";
-import { TaskService } from "src/app/services/task.service";
-import { Task } from "src/app/models/task.class";
-import { TaskState } from "src/app/models/task-state.enum";
-import { mergeDeepRight } from "ramda";
-import { Observable, of } from "rxjs";
-import { Project } from "src/app/models/project.class";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ProjectService } from 'src/app/services/project.service';
+import { map, tap, switchMap } from 'rxjs/operators';
+import { TaskService } from 'src/app/services/task.service';
+import { Task } from 'src/app/models/task.class';
+import { TaskState } from 'src/app/models/task-state.enum';
+import { mergeDeepRight } from 'ramda';
+import { Observable, of } from 'rxjs';
+import { Project } from 'src/app/models/project.class';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 interface TaskGroup {
   state: TaskState;
@@ -23,9 +23,9 @@ const createInitialGroups = (): TaskGroup[] => [
 ];
 
 @Component({
-  selector: "app-board",
-  templateUrl: "./board.component.html",
-  styleUrls: ["./board.component.scss"]
+  selector: 'app-board',
+  templateUrl: './board.component.html',
+  styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
   project$: Observable<Project>;
@@ -33,12 +33,13 @@ export class BoardComponent implements OnInit {
   states = TaskState;
   selectedTask: Task;
   taskForm = new FormGroup({
-    text: new FormControl("", Validators.required),
-    state: new FormControl("", Validators.required),
-    description: new FormControl("")
+    text: new FormControl('', Validators.required),
+    state: new FormControl('', Validators.required),
+    description: new FormControl('')
   });
   isListView = false;
   tasks: Task[];
+  tasks$: Observable<Task[]>;
 
   constructor(
     private projectService: ProjectService,
@@ -56,8 +57,8 @@ export class BoardComponent implements OnInit {
     });
 
     this.modalService.open(content, {
-      ariaLabelledBy: "modal-basic-title",
-      size: "lg"
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'lg'
     });
   }
 
@@ -70,113 +71,100 @@ export class BoardComponent implements OnInit {
     });
 
     this.modalService.open(content, {
-      ariaLabelledBy: "modal-basic-title",
-      size: "lg"
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'lg'
     });
   }
 
   saveTask() {
-    const updatedTask = mergeDeepRight(this.selectedTask, this.taskForm.value);
+    const updatedTask: Task = mergeDeepRight(this.selectedTask, this.taskForm.value);
     const resetState = () => {
       this.taskForm.setValue({
-        text: "",
-        description: "",
-        state: ""
+        text: '',
+        description: '',
+        state: ''
       });
       this.selectedTask = null;
       this.modalService.dismissAll();
-      this.taskGroups$ = this.project$.pipe(
-        map(project => this.createTaskGroups(project))
-      );
     };
 
     if (this.selectedTask) {
       this.taskService.updateTask(updatedTask).then(resetState);
     } else {
       this.project$.subscribe(project => {
-        updatedTask.projectId = project.name;
-        this.taskService.addTask(updatedTask);
-        this.taskGroups$ = of(this.createTaskGroups(project));
-        resetState();
+        this.taskService
+          .addTask(project.id, updatedTask.text, updatedTask.description, updatedTask.state)
+          .then(resetState);
       });
     }
   }
 
   closeModal(modal) {
-    modal.dismiss("Closing model without saving");
+    modal.dismiss('Closing model without saving');
   }
 
   ngOnInit() {
     this.project$ = this.route.paramMap.pipe(
-      map((params: ParamMap) => {
-        return this.projectService.projects.find(
-          p => p.name === params.get("projectId")
-        );
+      switchMap((params: ParamMap) => {
+        return this.projectService.getProject(params.get('id'));
       })
     );
-    this.taskGroups$ = this.project$.pipe(
-      map(project => this.createTaskGroups(project))
+    this.tasks$ = this.project$.pipe(switchMap(project => this.taskService.getTasks(project.id)));
+    this.taskGroups$ = this.tasks$.pipe(
+      map(tasks =>
+        tasks.reduce((acc, task) => {
+          const existingGroup = acc.find(t => t.state === task.state);
+
+          if (existingGroup) {
+            existingGroup.tasks.push(task);
+          } else {
+            acc.push({
+              state: task.state,
+              tasks: [task]
+            });
+          }
+          return acc;
+        }, createInitialGroups())
+      )
     );
   }
 
   getStateChangeText({ state }: Task) {
     switch (state) {
       case TaskState.NotStarted:
-        return "Start";
+        return 'Start';
       case TaskState.InProgress:
-        return "Complete";
+        return 'Complete';
       case TaskState.Done:
-        return "Rework";
+        return 'Rework';
     }
-    return "Move";
+    return 'Move';
   }
 
   getStateIconClass({ state }: Task) {
     switch (state) {
       case TaskState.NotStarted:
-        return "fa fa-arrow-right";
+        return 'fa fa-arrow-right';
       case TaskState.InProgress:
-        return "fa fa-check";
+        return 'fa fa-check';
       case TaskState.Done:
-        return "fa fa-arrow-left";
+        return 'fa fa-arrow-left';
     }
-    return "Move";
-  }
-
-  createTaskGroups(project) {
-    this.tasks = this.taskService.tasks.filter(
-      t => t.projectId === project.name
-    );
-
-    return this.tasks.reduce((acc, task) => {
-      const existingGroup = acc.find(t => t.state === task.state);
-
-      if (existingGroup) {
-        existingGroup.tasks.push(task);
-      } else {
-        acc.push({
-          state: task.state,
-          tasks: [task]
-        });
-      }
-      return acc;
-    }, createInitialGroups());
+    return 'Move';
   }
 
   changeIconState(project, task) {
-    if (task.state === TaskState.NotStarted) {
-      task.state = TaskState.InProgress;
-    } else if (task.state === TaskState.InProgress) {
-      task.state = TaskState.Done;
-    } else if (task.state === TaskState.Done) {
-      task.state = TaskState.InProgress;
-    }
-    this.taskGroups$ = of(this.createTaskGroups(project));
+    const stateTransitions = {
+      [TaskState.NotStarted]: TaskState.InProgress,
+      [TaskState.InProgress]: TaskState.Done,
+      [TaskState.Done]: TaskState.InProgress
+    };
+    const nextState = stateTransitions[task.state];
+    return this.taskService.changeState(task.id, project.id, nextState);
   }
 
   showListView() {
     this.isListView = true;
-    this.taskGroups$ = this.project$.pipe(map(this.createTaskGroups));
   }
 
   hideListView() {

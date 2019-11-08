@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2, OnDestroy } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthenticationService } from './core/authentication.service';
 import { User } from 'firebase';
@@ -9,16 +9,15 @@ import { Router } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Globetrotters';
   loggedInUser: User;
 
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private renderer: Renderer2) {
-
-  }
+    private renderer: Renderer2
+  ) {}
 
   ngOnDestroy() {
     this.renderer.removeClass(document.body, 'modal-open');

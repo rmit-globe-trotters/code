@@ -1,18 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { FormControl, Validators, FormGroup } from "@angular/forms";
-import { ProjectService } from "../services/project.service";
-import { AngularFireAuth } from "@angular/fire/auth";
-import { Router } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { ProjectService } from '../services/project.service';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-add-project",
-  templateUrl: "./add-project.component.html",
-  styleUrls: ["./add-project.component.scss"]
+  selector: 'app-add-project',
+  templateUrl: './add-project.component.html',
+  styleUrls: ['./add-project.component.scss']
 })
 export class AddProjectComponent implements OnInit {
   projectForm = new FormGroup({
-    name: new FormControl("", Validators.required),
-    description: new FormControl("", Validators.required)
+    name: new FormControl('', Validators.required),
+    description: new FormControl('', Validators.required)
   });
 
   loggedInUser: any;
@@ -29,17 +29,16 @@ export class AddProjectComponent implements OnInit {
     });
   }
 
-  saveProject() {
+  async saveProject() {
     if (!this.projectForm.valid) {
       return;
     }
-
-    this.projectService.addProject({
+    await this.projectService.addProject({
       name: this.projectForm.value.name,
       description: this.projectForm.value.description,
       creator: this.loggedInUser.uid,
       members: []
     });
-    this.router.navigateByUrl("/");
+    this.router.navigateByUrl('/');
   }
 }

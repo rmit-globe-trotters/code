@@ -2,14 +2,12 @@
 <hr />
 
 <div class="row">
-  <div *ngFor="let project of projects" class="col-3">
+  <div *ngFor="let project of projects$ | async" class="col-3">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">{{ project.name }}</h5>
         <p>{{ project.description }}</p>
-        <a class="btn card-link" [routerLink]="['/board', project.name]"
-          >View Board</a
-        >
+        <a class="btn card-link" [routerLink]="['/board', project.id]">View Board</a>
       </div>
     </div>
   </div>
@@ -22,7 +20,3 @@
     </div>
   </div>
 </div>
-
-<pre>
-  {{ projects | json }}
-</pre>

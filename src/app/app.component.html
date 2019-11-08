@@ -7,11 +7,7 @@
     </li>
     <li class="nav-item active">
       <a class="nav-link" *ngIf="loggedInUser" [routerLink]="['profile']">
-        <img
-          [src]="loggedInUser.photoURL"
-          class="profile-photo"
-          alt="profile image"
-        />
+        <img [src]="loggedInUser.photoURL" class="profile-photo" alt="profile image" />
       </a>
     </li>
   </ul>
@@ -23,12 +19,6 @@
       <a class="nav-link" routerLink="/">
         <i class="fas fa-fw fa-user-friends"></i>
         <span>Projects</span>
-      </a>
-    </li>
-    <li class="nav-item active">
-      <a class="nav-link" routerLink="/board">
-        <i class="fas fa-fw fa-tasks"></i>
-        <span>Board</span>
       </a>
     </li>
     <li class="nav-item active">

@@ -1,35 +1,44 @@
-import { Injectable } from "@angular/core";
-import { Project } from "../models/project.class";
+import { Injectable } from '@angular/core';
+import { Project } from '../models/project.class';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { flattenDocument } from './utils';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class ProjectService {
-  public projects: Project[] = [
-    {
-      name: "Project 1",
-      description:
-        "A fake project that is here to show some content on the page",
-      creator: "Luke",
-      members: ["Luke", "John"]
-    },
-    {
-      name: "Project 2",
-      description: "A slightly different description",
-      creator: "Luke",
-      members: ["Mohamed", "John"]
-    },
-    {
-      name: "Project 3",
-      description: "I love projects",
-      creator: "Luke",
-      members: ["Austin", "Mohamed"]
-    }
-  ];
+  private collectionName = 'projects';
+  projects$: Observable<Project[]>;
 
-  constructor() {}
+  constructor(private firestore: AngularFirestore, private afAuth: AngularFireAuth) {}
 
-  addProject(project: Project) {
-    this.projects.push(project);
+  getProjects() {
+    return this.afAuth.authState.pipe(
+      switchMap(user =>
+        this.firestore
+          .collection<Project>(this.collectionName, ref => ref.where('creator', '==', user.uid))
+          .snapshotChanges()
+          .pipe(flattenDocument)
+      )
+    );
+  }
+
+  addProject({ name, description, members }: Project) {
+    return this.afAuth.authState.subscribe(({ uid }) => {
+      return this.firestore
+        .collection<Project>(this.collectionName, ref => ref.where('creator', '==', uid))
+        .add({ name, description, creator: uid, members });
+    });
+  }
+
+  getProject(id: any) {
+    return this.firestore
+      .collection<Project>(this.collectionName)
+      .doc(id)
+      .get()
+      .pipe(map(doc => ({ id, ...doc.data() } as Project)));
   }
 }

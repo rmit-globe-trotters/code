@@ -24,17 +24,9 @@
           required
         ></textarea>
       </div>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="!projectForm.valid"
-      >
+      <button type="submit" class="btn btn-primary" [disabled]="!projectForm.valid">
         Create Project
       </button>
     </form>
   </div>
 </div>
-
-<pre>
-    {{ projectForm.value | json }}
-</pre>
