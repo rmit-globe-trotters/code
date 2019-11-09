@@ -24,6 +24,23 @@
           required
         ></textarea>
       </div>
+      <div class="form-group">
+        <label for="description">Team Members</label>
+        <type-ahead
+          class="form-control"
+          formControlName="members"
+          multi="true"
+          complex="true"
+          custom="false"
+          nameField="displayName"
+          [itemTemplate]="typeaheadItemTemplate"
+          [suggestions]="users$ | async"
+        ></type-ahead>
+        <ng-template #typeaheadItemTemplate let-item="item">
+          {{ item.displayName }} <{{ item.email }}>
+        </ng-template>
+      </div>
+
       <button type="submit" class="btn btn-primary" [disabled]="!projectForm.valid">
         Create Project
       </button>

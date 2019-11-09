@@ -4,7 +4,7 @@ import { User } from 'firebase';
 import { Project } from '../models/project.class';
 import { ProjectService } from '../services/project.service';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -15,11 +15,17 @@ export class HomeComponent implements OnInit {
   loggedInUser: User;
   projects$: Observable<Project[]>;
 
-  constructor(private afAuth: AngularFireAuth, private projectService: ProjectService) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private projectService: ProjectService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.afAuth.authState.subscribe(user => {
-      this.loggedInUser = user;
+      this.userService.saveUserDetails(user).then(() => {
+        this.loggedInUser = user;
+      });
     });
     this.projects$ = this.projectService.getProjects();
   }

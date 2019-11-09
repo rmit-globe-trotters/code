@@ -28,6 +28,7 @@
     "firebase": "^6.6.2",
     "firebaseui": "^4.2.0",
     "firebaseui-angular": "^4.0.0",
+    "ngx-type-ahead": "^2.0.1",
     "ramda": "^0.26.1",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",

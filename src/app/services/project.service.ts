@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Project } from '../models/project.class';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { flattenDocument } from './utils';
 
@@ -17,21 +17,33 @@ export class ProjectService {
 
   getProjects() {
     return this.afAuth.authState.pipe(
-      switchMap(user =>
+      switchMap(({ uid }) =>
         this.firestore
-          .collection<Project>(this.collectionName, ref => ref.where('creator', '==', user.uid))
+          .collection<Project>(this.collectionName, ref =>
+            ref.where('members', 'array-contains', uid)
+          )
           .snapshotChanges()
           .pipe(flattenDocument)
-      )
+      ),
+      catchError(error => {
+        console.error(error);
+        return [];
+      })
     );
   }
 
   addProject({ name, description, members }: Project) {
-    return this.afAuth.authState.subscribe(({ uid }) => {
-      return this.firestore
-        .collection<Project>(this.collectionName, ref => ref.where('creator', '==', uid))
-        .add({ name, description, creator: uid, members });
-    });
+    return this.afAuth.authState.pipe(
+      map(({ uid }) =>
+        this.firestore.collection<Project>(this.collectionName).add({
+          name,
+          description,
+          creator: uid,
+          members: [uid, ...members],
+          createdAt: new Date()
+        })
+      )
+    );
   }
 
   getProject(id: any) {

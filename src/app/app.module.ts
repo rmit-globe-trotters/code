@@ -3,13 +3,6 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
-// import {FirebaseUIModule} from 'firebaseui-angular';
-// import * as firebase from 'firebase/app';
-// import * as firebaseui from 'firebaseui';
-// currently there is a bug while building the app with --prod
-// - https://github.com/RaphaelJenni/FirebaseUI-Angular/issues/76
-// the plugin exposes the two libraries as well. You can use those:
 import { FirebaseUIModule, firebase, firebaseui } from 'firebaseui-angular';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
@@ -24,6 +17,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { BoardComponent } from './team/board/board.component';
 import { AddProjectComponent } from './add-project/add-project.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TypeaheadModule } from 'ngx-type-ahead';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -54,7 +48,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     CoreModule,
     NgbModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    TypeaheadModule
   ],
   providers: [LoggedInGuard],
   bootstrap: [AppComponent]
