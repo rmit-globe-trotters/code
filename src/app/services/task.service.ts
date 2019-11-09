@@ -30,14 +30,13 @@ export class TaskService {
       .pipe(flattenDocument);
   }
 
-  addTask(projectId, text: string, description: string, state: TaskState) {
-    const id = this.firestore.createId();
+  addTask(projectId, text: string, description: string, state: TaskState, assignedTo: string) {
     const task: Task = {
       projectId,
       text,
       description,
       state,
-      assignedTo: null
+      assignedTo
     };
     return this.firestore
       .collection('projects')
@@ -57,7 +56,7 @@ export class TaskService {
         text,
         description,
         state,
-        assignedTo: null
+        assignedTo
       });
   }
 

@@ -35,11 +35,13 @@ export class BoardComponent implements OnInit {
   taskForm = new FormGroup({
     text: new FormControl('', Validators.required),
     state: new FormControl('', Validators.required),
-    description: new FormControl('')
+    description: new FormControl(''),
+    assignedTo: new FormControl()
   });
   isListView = false;
   tasks: Task[];
   tasks$: Observable<Task[]>;
+  users$: Observable<any[]>;
 
   constructor(
     private projectService: ProjectService,
@@ -53,7 +55,8 @@ export class BoardComponent implements OnInit {
     this.taskForm.setValue({
       text: null,
       description: null,
-      state
+      state,
+      assignedTo: ''
     });
 
     this.modalService.open(content, {
@@ -67,7 +70,8 @@ export class BoardComponent implements OnInit {
     this.taskForm.setValue({
       text: task.text,
       description: task.description,
-      state: task.state
+      state: task.state,
+      assignedTo: task.assignedTo
     });
 
     this.modalService.open(content, {
@@ -82,7 +86,8 @@ export class BoardComponent implements OnInit {
       this.taskForm.setValue({
         text: '',
         description: '',
-        state: ''
+        state: '',
+        assignedTo: ''
       });
       this.selectedTask = null;
       this.modalService.dismissAll();
@@ -93,7 +98,13 @@ export class BoardComponent implements OnInit {
     } else {
       this.project$.subscribe(project => {
         this.taskService
-          .addTask(project.id, updatedTask.text, updatedTask.description, updatedTask.state)
+          .addTask(
+            project.id,
+            updatedTask.text,
+            updatedTask.description,
+            updatedTask.state,
+            updatedTask.assignedTo
+          )
           .then(resetState);
       });
     }
@@ -126,6 +137,9 @@ export class BoardComponent implements OnInit {
           return acc;
         }, createInitialGroups())
       )
+    );
+    this.users$ = this.project$.pipe(
+      switchMap(project => this.projectService.getMembers(project.id))
     );
   }
 

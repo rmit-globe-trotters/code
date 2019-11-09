@@ -2,9 +2,15 @@ import { Injectable } from '@angular/core';
 import { Project } from '../models/project.class';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { map, switchMap, catchError, switchAll } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { flattenDocument } from './utils';
+import { UserService } from './user.service';
+
+const probe = v => {
+  console.log('probe', v);
+  return v;
+};
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +19,11 @@ export class ProjectService {
   private collectionName = 'projects';
   projects$: Observable<Project[]>;
 
-  constructor(private firestore: AngularFirestore, private afAuth: AngularFireAuth) {}
+  constructor(
+    private firestore: AngularFirestore,
+    private afAuth: AngularFireAuth,
+    private userService: UserService
+  ) {}
 
   getProjects() {
     return this.afAuth.authState.pipe(
@@ -52,5 +62,15 @@ export class ProjectService {
       .doc(id)
       .get()
       .pipe(map(doc => ({ id, ...doc.data() } as Project)));
+  }
+
+  getMembers(projectId: string) {
+    return this.getProject(projectId).pipe(
+      switchMap(({ members }) =>
+        this.userService.users$.pipe(
+          map(users => probe(users).filter(({ id }) => members.includes(id)))
+        )
+      )
+    );
   }
 }

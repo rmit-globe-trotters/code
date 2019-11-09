@@ -3,22 +3,12 @@
 
 <div class="btn-group btn-group-toggle">
   <label class="btn-secondary" ngbButtonLabel>
-    <input
-      type="checkbox"
-      ngbButton
-      [ngModel]="!isListView"
-      (click)="hideListView()"
-    />
+    <input type="checkbox" ngbButton [ngModel]="!isListView" (click)="hideListView()" />
     <i class="fa fa-columns"></i>
     Board View
   </label>
   <label class="btn-secondary" ngbButtonLabel>
-    <input
-      type="checkbox"
-      ngbButton
-      [ngModel]="isListView"
-      (click)="showListView()"
-    />
+    <input type="checkbox" ngbButton [ngModel]="isListView" (click)="showListView()" />
     <i class="fa fa-list"></i>
     List View
   </label>
@@ -43,7 +33,7 @@
           <div *ngFor="let task of group.tasks" class="card">
             <div class="card-body">
               <h5 class="card-title">{{ task.text }}</h5>
-              <p>Assigned to: {{ task.assignedTo || "Nobody" }}</p>
+              <p>Assigned to: {{ task.assignedTo || 'Unassigned' }}</p>
               <button class="btn" (click)="editTask(content, task)">
                 <i class="fa fa-edit"></i>
                 Edit
@@ -60,10 +50,7 @@
   </div>
 
   <div *ngIf="isListView">
-    <button
-      class="btn-primary float-right"
-      (click)="addTask(content, states.NotStarted)"
-    >
+    <button class="btn-primary float-right" (click)="addTask(content, states.NotStarted)">
       <i class="fa fa-plus"></i>
       Add Task
     </button>
@@ -83,7 +70,7 @@
             Edit
           </th>
         </tr>
-        <tr *ngFor="let task of tasks">
+        <tr *ngFor="let task of tasks$ | async">
           <td>
             {{ task.text }}
           </td>
@@ -108,12 +95,7 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Edit Task</h4>
-    <button
-      type="button"
-      class="close"
-      aria-label="Close"
-      (click)="modal.dismiss('Cross click')"
-    >
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -136,6 +118,17 @@
           <option [value]="states.Done">Done</option>
         </select>
       </div>
+
+      <div class="form-group">
+        <label for="name">Assigned To</label>
+        <select class="form-control" formControlName="assignedTo">
+          <option value="">Unassigned</option>
+          <option [value]="user.id" *ngFor="let user of users$ | async"
+            >{{ user.displayName }} <{{ user.email }}></option
+          >
+        </select>
+      </div>
+
       <div class="form-group">
         <label for="description">Description</label>
         <textarea
@@ -149,11 +142,7 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button
-      (click)="saveTask()"
-      class="btn btn-primary"
-      [disabled]="!taskForm.valid"
-    >
+    <button (click)="saveTask()" class="btn btn-primary" [disabled]="!taskForm.valid">
       Save
     </button>
   </div>

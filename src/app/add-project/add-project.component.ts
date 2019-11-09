@@ -33,7 +33,7 @@ export class AddProjectComponent implements OnInit {
     this.afAuth.authState.subscribe(user => {
       this.loggedInUser = user;
     });
-    this.users$ = this.userService.getUsers();
+    this.users$ = this.userService.users$;
   }
 
   async saveProject() {
