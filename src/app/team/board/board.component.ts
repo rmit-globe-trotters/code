@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { TaskService } from 'src/app/services/task.service';
@@ -42,13 +42,19 @@ export class BoardComponent implements OnInit {
   tasks: Task[];
   tasks$: Observable<Task[]>;
   users$: Observable<any[]>;
+  projects$: Observable<Project[]>;
 
   constructor(
     private projectService: ProjectService,
     private taskService: TaskService,
     private modalService: NgbModal,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
+
+  changeProject(projectId: string) {
+    this.router.navigate(['board', projectId]);
+  }
 
   addTask(content, state: TaskState) {
     this.selectedTask = null;
@@ -115,6 +121,7 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.projects$ = this.projectService.getProjects();
     this.project$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         return this.projectService.getProject(params.get('id'));

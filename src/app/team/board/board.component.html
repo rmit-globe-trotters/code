@@ -1,39 +1,54 @@
-<h2 *ngIf="project$ | async as project">Board for {{ project.name }}</h2>
-<hr />
+<div *ngIf="project$ | async as project; else projectLoading">
+  <div class="clearfix">
+    <div class="float-left">
+      <select
+        class="form-control"
+        [ngModel]="project.id"
+        (change)="changeProject($event.target.value)"
+      >
+        <option *ngFor="let project of projects$ | async" [value]="project.id">{{
+          project.name
+        }}</option>
+      </select>
+    </div>
 
-<div class="btn-group btn-group-toggle">
-  <label class="btn-secondary" ngbButtonLabel>
-    <input type="checkbox" ngbButton [ngModel]="!isListView" (click)="hideListView()" />
-    <i class="fa fa-columns"></i>
-    Board View
-  </label>
-  <label class="btn-secondary" ngbButtonLabel>
-    <input type="checkbox" ngbButton [ngModel]="isListView" (click)="showListView()" />
-    <i class="fa fa-list"></i>
-    List View
-  </label>
-</div>
+    <div class="float-right">
+      <div class="btn-group btn-group-toggle">
+        <label class="btn-secondary" ngbButtonLabel>
+          <input type="checkbox" ngbButton [ngModel]="!isListView" (click)="hideListView()" />
+          <i class="fa fa-columns"></i>
+          Board
+        </label>
+        <label class="btn-secondary" ngbButtonLabel>
+          <input type="checkbox" ngbButton [ngModel]="isListView" (click)="showListView()" />
+          <i class="fa fa-list"></i>
+          List
+        </label>
+      </div>
+    </div>
+  </div>
 
-<div *ngIf="project$ | async as project">
-  <div *ngIf="!isListView" class="row board">
-    <div *ngFor="let group of taskGroups$ | async" class="col-4 board-col">
-      <div class="container">
-        <h3>
-          {{ group.state }}
-        </h3>
-        <hr />
-        <div>
-          <div class="card">
-            <button class="btn" (click)="addTask(content, group.state)">
-              <i class="fa fa-plus"></i>
-              Add Task
-            </button>
-          </div>
-          <br />
-          <div *ngFor="let task of group.tasks" class="card">
+  <hr />
+
+  <div *ngIf="tasks$ | async as tasks; else tasksLoading">
+    <div *ngIf="!isListView" class="card-deck">
+      <div *ngFor="let group of taskGroups$ | async" class="card">
+        <div class="card-header clearfix z-1">
+          <span class="float-left">{{ group.state }} ({{ group.tasks.length }})</span>
+          <a class="float-right" (click)="addTask(content, group.state)">
+            <i class="fas fa-plus"></i>
+          </a>
+        </div>
+        <div class="card-body pt-2 pl-3 pr-3 pb-0">
+          <div *ngFor="let task of group.tasks" class="card o-hidden ml-0 mr-0 mb-2">
             <div class="card-body">
+              <div class="card-body-icon">
+                <i class="fa fa-thumbtack"></i>
+              </div>
               <h5 class="card-title">{{ task.text }}</h5>
               <p>Assigned to: {{ task.assignedTo || 'Unassigned' }}</p>
+            </div>
+            <div class="card-footer">
               <button class="btn" (click)="editTask(content, task)">
                 <i class="fa fa-edit"></i>
                 Edit
@@ -47,50 +62,74 @@
         </div>
       </div>
     </div>
+
+    <div *ngIf="isListView">
+      <div class="clearfix mb-3">
+        <div class="float-left">
+          <h3>Task List</h3>
+        </div>
+        <div class="float-right">
+          <a class="btn btn-primary" (click)="addTask(content, states.NotStarted)">
+            <i class="fa fa-plus"></i>
+            Add Task
+          </a>
+        </div>
+      </div>
+
+      <table class="table responsive">
+        <thead>
+          <tr>
+            <th>
+              Text
+            </th>
+            <th>
+              Description
+            </th>
+            <th>
+              State
+            </th>
+            <th>
+              Edit
+            </th>
+          </tr>
+          <tr *ngFor="let task of tasks">
+            <td>
+              {{ task.text }}
+            </td>
+            <td>
+              {{ task.description }}
+            </td>
+            <td>
+              {{ task.state }}
+            </td>
+            <td>
+              <button class="btn" (click)="editTask(content, task)">
+                <i class="fa fa-edit"></i>
+                Edit
+              </button>
+            </td>
+          </tr>
+        </thead>
+      </table>
+    </div>
   </div>
 
-  <div *ngIf="isListView">
-    <button class="btn-primary float-right" (click)="addTask(content, states.NotStarted)">
-      <i class="fa fa-plus"></i>
-      Add Task
-    </button>
-    <table class="table responsive">
-      <thead>
-        <tr>
-          <th>
-            Text
-          </th>
-          <th>
-            Description
-          </th>
-          <th>
-            State
-          </th>
-          <th>
-            Edit
-          </th>
-        </tr>
-        <tr *ngFor="let task of tasks$ | async">
-          <td>
-            {{ task.text }}
-          </td>
-          <td>
-            {{ task.description }}
-          </td>
-          <td>
-            {{ task.state }}
-          </td>
-          <td>
-            <button class="btn" (click)="editTask(content, task)">
-              <i class="fa fa-edit"></i>
-              Edit
-            </button>
-          </td>
-        </tr>
-      </thead>
-    </table>
-  </div>
+  <ng-template #tasksLoading>
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Tasks Loading...</span>
+      </div>
+    </div>
+  </ng-template>
 </div>
+
+<ng-template #projectLoading>
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Project Loading...</span>
+    </div>
+  </div>
+</ng-template>
 
 <ng-template #content let-modal>
   <div class="modal-header">
