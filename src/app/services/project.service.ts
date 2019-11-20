@@ -90,4 +90,11 @@ export class ProjectService {
       )
     );
   }
+
+  removeProject(id: string) {
+    return this.firestore
+      .collection<Project>(this.collectionName)
+      .doc(id)
+      .delete();
+  }
 }

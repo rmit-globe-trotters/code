@@ -257,6 +257,10 @@
     </button>
   </div>
   <div class="modal-body">
-    <app-add-project [project]="project$ | async" (save)="saveProject($event)"></app-add-project>
+    <app-add-project
+      [project]="project$ | async"
+      (save)="saveProject($event)"
+      (remove)="removeProject()"
+    ></app-add-project>
   </div>
 </ng-template>

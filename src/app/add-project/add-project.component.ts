@@ -41,6 +41,9 @@ export class AddProjectComponent implements OnInit {
   @Output()
   save = new EventEmitter<Project>();
 
+  @Output()
+  remove = new EventEmitter();
+
   loggedInUser: any;
   users$: Observable<any[]>;
 

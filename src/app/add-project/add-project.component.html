@@ -37,7 +37,15 @@
     </ng-template>
   </div>
 
-  <button type="submit" class="btn btn-primary" [disabled]="!projectForm.valid">
-    {{ project ? 'Update' : 'Create' }} Project
-  </button>
+  <div class="clearfix">
+    <button *ngIf="project" (click)="remove.emit()" class="btn btn-danger float-left">
+      <i class="fa fa-trash"></i>
+      Delete
+    </button>
+
+    <button type="submit" class="btn btn-primary float-right" [disabled]="!projectForm.valid">
+      <i class="fa fa-save"></i>
+      Save
+    </button>
+  </div>
 </form>

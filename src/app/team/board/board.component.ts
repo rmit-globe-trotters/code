@@ -93,6 +93,12 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
 
+  removeProject() {
+    return this.project$.subscribe(project => {
+      this.projectService.removeProject(project.id);
+      this.router.navigate(['/']);
+    });
+  }
   saveTask() {
     const updatedTask: Task = mergeDeepRight(this.selectedTask, this.taskForm.value);
     const resetState = () => {

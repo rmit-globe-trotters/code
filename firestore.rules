@@ -8,7 +8,8 @@ service cloud.firestore {
 
     match /projects/{projectId} {
       allow read: if isMember();
-      allow update,delete: if isCreator();
+      allow update: if isCreator();
+      allow delete: if isCreator();
       allow create: if isLoggedIn();
 
       match /tasks/{taskId} {
