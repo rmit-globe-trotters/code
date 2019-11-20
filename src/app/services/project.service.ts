@@ -56,6 +56,23 @@ export class ProjectService {
     );
   }
 
+  updateProject({ id, name, description, members }: Project) {
+    return this.afAuth.authState.pipe(
+      map(({ uid }) =>
+        this.firestore
+          .collection<Project>(this.collectionName)
+          .doc(id)
+          .set({
+            name,
+            description,
+            creator: uid,
+            members: [uid, ...members],
+            updatedAt: new Date()
+          })
+      )
+    );
+  }
+
   getProject(id: any) {
     return this.firestore
       .collection<Project>(this.collectionName)
@@ -67,9 +84,9 @@ export class ProjectService {
   getMembers(projectId: string) {
     return this.getProject(projectId).pipe(
       switchMap(({ members }) =>
-        this.userService.users$.pipe(
-          map(users => probe(users).filter(({ id }) => members.includes(id)))
-        )
+        this.userService
+          .getLatestUsers()
+          .pipe(map(users => users.filter(({ id }: any) => members.includes(id))))
       )
     );
   }

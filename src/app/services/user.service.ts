@@ -17,10 +17,18 @@ export class UserService {
         this.firestore
           .collection<User>('users')
           .snapshotChanges()
-          .pipe(
-            flattenDocument,
-            map(users => users.filter(u => u.id !== uid))
-          )
+          .pipe(flattenDocument)
+      )
+    );
+  }
+
+  getLatestUsers(): Observable<User[]> {
+    return this.afAuth.authState.pipe(
+      switchMap(({ uid }) =>
+        this.firestore
+          .collection<User>('users')
+          .get()
+          .pipe(map(x => x.docs.map(doc => ({ id: doc.id, ...doc.data() } as any))))
       )
     );
   }

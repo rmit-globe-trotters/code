@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
@@ -10,6 +10,7 @@ import { mergeDeepRight } from 'ramda';
 import { Observable, of } from 'rxjs';
 import { Project } from 'src/app/models/project.class';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { User } from 'firebase';
 
 interface TaskGroup {
   state: TaskState;
@@ -27,7 +28,7 @@ const createInitialGroups = (): TaskGroup[] => [
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss']
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit, OnDestroy {
   project$: Observable<Project>;
   taskGroups$: Observable<TaskGroup[]>;
   states = TaskState;
@@ -41,8 +42,9 @@ export class BoardComponent implements OnInit {
   isListView = false;
   tasks: Task[];
   tasks$: Observable<Task[]>;
-  users$: Observable<any[]>;
   projects$: Observable<Project[]>;
+  users: User[];
+  userSub: any;
 
   constructor(
     private projectService: ProjectService,
@@ -86,6 +88,11 @@ export class BoardComponent implements OnInit {
     });
   }
 
+  removeTask(taskId, projectId) {
+    this.taskService.remove(taskId, projectId);
+    this.modalService.dismissAll();
+  }
+
   saveTask() {
     const updatedTask: Task = mergeDeepRight(this.selectedTask, this.taskForm.value);
     const resetState = () => {
@@ -114,6 +121,19 @@ export class BoardComponent implements OnInit {
           .then(resetState);
       });
     }
+  }
+
+  editProject(modal) {
+    this.modalService.open(modal, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'lg'
+    });
+  }
+
+  saveProject(project: Project) {
+    this.projectService.updateProject(project).subscribe(() => {
+      this.modalService.dismissAll();
+    });
   }
 
   closeModal(modal) {
@@ -145,9 +165,16 @@ export class BoardComponent implements OnInit {
         }, createInitialGroups())
       )
     );
-    this.users$ = this.project$.pipe(
-      switchMap(project => this.projectService.getMembers(project.id))
-    );
+
+    this.userSub = this.project$
+      .pipe(switchMap(project => this.projectService.getMembers(project.id)))
+      .subscribe(users => {
+        this.users = users;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.userSub.unsubscribe();
   }
 
   getStateChangeText({ state }: Task) {

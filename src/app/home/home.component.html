@@ -3,7 +3,7 @@
     <h2>My Projects</h2>
   </div>
   <div class="float-right">
-    <a class="btn btn-primary" [routerLink]="'/project/add'">
+    <a class="btn btn-primary" (click)="addProject(content)">
       <i class="fas fa-plus"></i>
       <span>Add Project</span>
     </a>
@@ -14,7 +14,7 @@
 
 <div class="container-fluid content-row">
   <div class="row" *ngIf="projects$ | async as projects; else projectLoading">
-    <div *ngFor="let project of projects" class="col-sm-12 col-md-6 col-lg-3">
+    <div *ngFor="let project of projects" class="mt-2 col-sm-12 col-md-6 col-lg-3">
       <div class="card text-white bg-primary o-hidden d-flex h-100">
         <div class="card-body">
           <div class="card-body-icon">
@@ -47,3 +47,15 @@
     </div>
   </ng-template>
 </div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add Project</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-add-project (save)="saveProject($event)"></app-add-project>
+  </div>
+</ng-template>

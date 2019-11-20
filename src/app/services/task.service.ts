@@ -81,4 +81,13 @@ export class TaskService {
         state
       });
   }
+
+  remove(id: string, projectId: string) {
+    return this.firestore
+      .collection('projects')
+      .doc(projectId)
+      .collection('tasks')
+      .doc(id)
+      .delete();
+  }
 }

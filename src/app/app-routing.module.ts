@@ -23,11 +23,6 @@ const routes: Routes = [
     path: 'board/:id',
     component: BoardComponent,
     canActivate: [LoggedInGuard]
-  },
-  {
-    path: 'project/add',
-    component: AddProjectComponent,
-    canActivate: [LoggedInGuard]
   }
 ];
 

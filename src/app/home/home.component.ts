@@ -5,6 +5,7 @@ import { Project } from '../models/project.class';
 import { ProjectService } from '../services/project.service';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/user.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private afAuth: AngularFireAuth,
     private projectService: ProjectService,
-    private userService: UserService
+    private userService: UserService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -28,5 +30,18 @@ export class HomeComponent implements OnInit {
       });
     });
     this.projects$ = this.projectService.getProjects();
+  }
+
+  addProject(content) {
+    this.modalService.open(content, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'lg'
+    });
+  }
+
+  saveProject(project: Project) {
+    this.projectService.addProject(project).subscribe(() => {
+      this.modalService.dismissAll();
+    });
   }
 }

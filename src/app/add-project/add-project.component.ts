@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
-import { ProjectService } from '../services/project.service';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { Observable } from 'rxjs';
-import { map, take, tap, takeLast } from 'rxjs/operators';
+import { Project } from '../models/project.class';
 
 @Component({
   selector: 'app-add-project',
@@ -15,19 +13,38 @@ import { map, take, tap, takeLast } from 'rxjs/operators';
 export class AddProjectComponent implements OnInit {
   projectForm = new FormGroup({
     name: new FormControl('', Validators.required),
-    members: new FormControl(''),
+    members: new FormControl([]),
     description: new FormControl('', Validators.required)
   });
+  _project: Project;
+
+  @Input()
+  set project(value: Project) {
+    this._project = value;
+
+    if (!this._project) {
+      return;
+    }
+
+    this.projectForm.controls.name.setValue(this._project.name);
+    this.projectForm.controls.description.setValue(this._project.description);
+
+    this.users$.subscribe(() => {
+      this.projectForm.controls.members.setValue(this._project.members);
+    });
+  }
+
+  get project(): Project {
+    return this._project;
+  }
+
+  @Output()
+  save = new EventEmitter<Project>();
 
   loggedInUser: any;
   users$: Observable<any[]>;
 
-  constructor(
-    private afAuth: AngularFireAuth,
-    private projectService: ProjectService,
-    private userService: UserService,
-    private router: Router
-  ) {}
+  constructor(private afAuth: AngularFireAuth, private userService: UserService) {}
 
   ngOnInit(): void {
     this.afAuth.authState.subscribe(user => {
@@ -41,14 +58,8 @@ export class AddProjectComponent implements OnInit {
       return;
     }
 
-    this.projectService
-      .addProject({
-        name: this.projectForm.value.name,
-        description: this.projectForm.value.description,
-        members: this.projectForm.value.members
-      })
-      .subscribe(() => this.router.navigateByUrl('/'));
+    const id = this.project ? this.project.id : null;
+    const project = { id, ...this.projectForm.value };
+    return this.save.emit(project);
   }
 }
-// lukejkw: ejCLLduqElYpY6d7Pqp7hsFEXYd2
-// student: zIKMISBm70X3s7IfIc70KpPv5452

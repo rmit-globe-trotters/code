@@ -7,18 +7,43 @@ const db = admin.firestore();
 
 const assignedToProp = propOr('', 'assignedTo');
 
-export const setAssignedUserDetails = functions.firestore
-  .document('/projects/{projectId}/tasks/{taskId}')
+export const setAssignedUserDetails = functions
+  .region('asia-northeast1')
+  .firestore.document('/projects/{projectId}/tasks/{taskId}')
   .onWrite((change, context) => {
+    if (!change.after.exists) {
+      return false;
+    }
+
     const previousTaskVersion = change.before.data();
     const currentTaskVersion = change.after.data();
 
     const previouslyAssignedUserId = assignedToProp(previousTaskVersion);
     const newlyAssignedUserId = assignedToProp(currentTaskVersion);
 
-    console.log('User Assigned Information: ', { previouslyAssignedUserId, newlyAssignedUserId });
+    console.log('User Assigned Information: ', {
+      previouslyAssignedUserId,
+      newlyAssignedUserId
+    });
 
-    if (previouslyAssignedUserId === newlyAssignedUserId) {
+    const isUserIdTheSame = previouslyAssignedUserId === newlyAssignedUserId;
+
+    if (!isUserIdTheSame && !newlyAssignedUserId) {
+      return change.after.ref.set(
+        {
+          assignedUser: null
+        },
+        { merge: true }
+      );
+    }
+
+    const doesTaskAlreadyHaveAssignedUserDetails = !(
+      currentTaskVersion &&
+      newlyAssignedUserId &&
+      !currentTaskVersion.assignedUser
+    );
+
+    if (isUserIdTheSame && doesTaskAlreadyHaveAssignedUserDetails) {
       return false;
     }
 

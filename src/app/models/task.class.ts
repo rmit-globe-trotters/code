@@ -1,4 +1,5 @@
 import { TaskState } from './task-state.enum';
+import { User } from './user';
 
 export interface Task {
   id?: string;
@@ -7,4 +8,5 @@ export interface Task {
   description: string;
   state: TaskState;
   assignedTo: string;
+  assignedUser?: User;
 }
