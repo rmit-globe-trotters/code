@@ -10,12 +10,12 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
 import { HomeComponent } from './home/home.component';
-import { LoggedInGuard } from './core/guards/logged-in.guard';
+import { LoggedInGuard } from './guards/logged-in.guard';
 import { CoreModule } from './core/core.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileComponent } from './profile/profile.component';
 import { BoardComponent } from './board/board.component';
-import { AddProjectComponent } from './edit-project/edit-project.component';
+import { EditProjectComponent } from './edit-project/edit-project.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-type-ahead';
 
@@ -36,7 +36,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     HomeComponent,
     ProfileComponent,
     BoardComponent,
-    AddProjectComponent
+    EditProjectComponent
   ],
   imports: [
     BrowserModule,

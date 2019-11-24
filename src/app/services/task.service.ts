@@ -20,7 +20,13 @@ export class TaskService {
       .pipe(flattenDocument);
   }
 
-  addTask(projectId, text: string, description: string, state: TaskState, assignedTo: string) {
+  addTask(
+    projectId,
+    text: string,
+    description: string,
+    state: TaskState,
+    assignedTo: string
+  ) {
     const task: Task = {
       projectId,
       text,

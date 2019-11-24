@@ -100,7 +100,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     });
   }
   saveTask() {
-    const updatedTask: Task = mergeDeepRight(this.selectedTask, this.taskForm.value);
+    const updatedTask: Task = mergeDeepRight(
+      this.selectedTask,
+      this.taskForm.value
+    );
     const resetState = () => {
       this.taskForm.setValue({
         text: '',
@@ -153,7 +156,9 @@ export class BoardComponent implements OnInit, OnDestroy {
         return this.projectService.getProject(params.get('id'));
       })
     );
-    this.tasks$ = this.project$.pipe(switchMap(project => this.taskService.getTasks(project.id)));
+    this.tasks$ = this.project$.pipe(
+      switchMap(project => this.taskService.getTasks(project.id))
+    );
     this.taskGroups$ = this.tasks$.pipe(
       map(tasks =>
         tasks.reduce((acc, task) => {

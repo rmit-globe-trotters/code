@@ -7,10 +7,10 @@ import { Project } from '../models/project.class';
 
 @Component({
   selector: 'app-edit-project',
-  templateUrl: './add-project.component.html',
-  styleUrls: ['./add-project.component.scss']
+  templateUrl: './edit-project.component.html',
+  styleUrls: ['./edit-project.component.scss']
 })
-export class AddProjectComponent implements OnInit {
+export class EditProjectComponent implements OnInit {
   projectForm = new FormGroup({
     name: new FormControl('', Validators.required),
     members: new FormControl([]),

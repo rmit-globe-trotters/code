@@ -10,10 +10,8 @@ import { Observable } from 'rxjs';
 import { tap, first, map } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class LoggedOutGuard implements CanActivate {
+@Injectable()
+export class LoggedInGuard implements CanActivate {
   constructor(private afAuth: AngularFireAuth, private router: Router) {}
 
   canActivate(
@@ -23,11 +21,11 @@ export class LoggedOutGuard implements CanActivate {
     return this.afAuth.authState.pipe(
       first(),
       tap(user => {
-        if (user) {
-          return this.router.navigateByUrl('/');
+        if (!user) {
+          return this.router.navigate(['login']);
         }
       }),
-      map(user => !user)
+      map(user => !!user)
     );
   }
 }
