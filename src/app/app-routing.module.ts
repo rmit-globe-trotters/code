@@ -1,10 +1,9 @@
-import { NgModule, Component } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { LoggedInGuard } from './logged-in.guard';
+import { LoggedInGuard } from './core/guards/logged-in.guard';
 import { ProfileComponent } from './profile/profile.component';
-import { BoardComponent } from './team/board/board.component';
-import { AddProjectComponent } from './add-project/add-project.component';
+import { BoardComponent } from './board/board.component';
 
 const stringEmpty = '';
 

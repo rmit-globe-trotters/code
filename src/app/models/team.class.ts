@@ -1,9 +1,9 @@
 import { Project } from './project.class';
 
 export interface Team {
-    name: String;
-    owner: String,
-    members: []
+  name: string;
+  owner: string;
+  members: [];
 
-    projects: Project[]
+  projects: Project[];
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit, Renderer2, OnDestroy } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AuthenticationService } from './core/authentication.service';
 import { User } from 'firebase';
 import { Router } from '@angular/router';
 
