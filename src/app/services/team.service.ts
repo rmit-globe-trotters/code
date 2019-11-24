@@ -6,15 +6,15 @@ import { Team } from '../models/team.class';
   providedIn: 'root'
 })
 export class TeamService {
-  collectionName = 'teams'
+  collectionName = 'teams';
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(private firestore: AngularFirestore) {}
 
   addTeam(team: Team) {
-    return this.firestore.collection(this.collectionName).add(team)
+    return this.firestore.collection(this.collectionName).add(team);
   }
 
-  getTeams(userId: String) {
-    return this.firestore.collection(this.collectionName).snapshotChanges()
+  getTeams(userId: string) {
+    return this.firestore.collection(this.collectionName).snapshotChanges();
   }
 }

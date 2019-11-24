@@ -10,14 +10,14 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
 import { HomeComponent } from './home/home.component';
-import { LoggedInGuard } from './logged-in.guard';
-import { CoreModule } from './core/core.module';
+import { LoggedInGuard } from './guards/logged-in.guard';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileComponent } from './profile/profile.component';
-import { BoardComponent } from './team/board/board.component';
-import { AddProjectComponent } from './add-project/add-project.component';
+import { BoardComponent } from './board/board.component';
+import { EditProjectComponent } from './edit-project/edit-project.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-type-ahead';
+import { LoginComponent } from './login/login.component';
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
@@ -36,7 +36,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     HomeComponent,
     ProfileComponent,
     BoardComponent,
-    AddProjectComponent
+    LoginComponent,
+    EditProjectComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +46,6 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     FirebaseUIModule.forRoot(firebaseUiAuthConfig),
     AngularFireAuthModule,
     AngularFirestoreModule,
-    CoreModule,
     NgbModule,
     ReactiveFormsModule,
     FormsModule,

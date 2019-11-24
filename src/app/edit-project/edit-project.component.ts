@@ -6,16 +6,17 @@ import { Observable } from 'rxjs';
 import { Project } from '../models/project.class';
 
 @Component({
-  selector: 'app-add-project',
-  templateUrl: './add-project.component.html',
-  styleUrls: ['./add-project.component.scss']
+  selector: 'app-edit-project',
+  templateUrl: './edit-project.component.html',
+  styleUrls: ['./edit-project.component.scss']
 })
-export class AddProjectComponent implements OnInit {
+export class EditProjectComponent implements OnInit {
   projectForm = new FormGroup({
     name: new FormControl('', Validators.required),
     members: new FormControl([]),
     description: new FormControl('', Validators.required)
   });
+  // tslint:disable-next-line: variable-name
   _project: Project;
 
   @Input()
@@ -47,7 +48,10 @@ export class AddProjectComponent implements OnInit {
   loggedInUser: any;
   users$: Observable<any[]>;
 
-  constructor(private afAuth: AngularFireAuth, private userService: UserService) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.afAuth.authState.subscribe(user => {

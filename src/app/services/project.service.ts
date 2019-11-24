@@ -86,7 +86,9 @@ export class ProjectService {
       switchMap(({ members }) =>
         this.userService
           .getLatestUsers()
-          .pipe(map(users => users.filter(({ id }: any) => members.includes(id))))
+          .pipe(
+            map(users => users.filter(({ id }: any) => members.includes(id)))
+          )
       )
     );
   }

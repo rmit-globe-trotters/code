@@ -3,7 +3,7 @@ sudo: false
 
 language: node_js
 node_js:
-  - "10"
+  - '10'
 
 addons:
   apt:
@@ -18,7 +18,13 @@ cache:
 
 install:
   - npm install
+  - npm install -g firebase-tools
 
 script:
   - npm run test -- --watch=false --no-progress --browsers=ChromeHeadlessNoSandbox
+  - npm run lint
   - npm run build --prod
+
+after_success:
+  - test $TRAVIS_BRANCH = "master" &&
+    firebase deploy --token $FIREBASE_TOKEN

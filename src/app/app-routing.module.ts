@@ -1,10 +1,11 @@
-import { NgModule, Component } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { LoggedInGuard } from './logged-in.guard';
+import { LoggedInGuard } from './guards/logged-in.guard';
 import { ProfileComponent } from './profile/profile.component';
-import { BoardComponent } from './team/board/board.component';
-import { AddProjectComponent } from './add-project/add-project.component';
+import { BoardComponent } from './board/board.component';
+import { LoginComponent } from './login/login.component';
+import { LoggedOutGuard } from './guards/logged-out.guard';
 
 const stringEmpty = '';
 
@@ -13,6 +14,11 @@ const routes: Routes = [
     path: stringEmpty,
     component: HomeComponent,
     canActivate: [LoggedInGuard]
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [LoggedOutGuard]
   },
   {
     path: 'profile',

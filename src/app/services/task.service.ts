@@ -4,16 +4,6 @@ import { TaskState } from '../models/task-state.enum';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { flattenDocument } from './utils';
 import { Observable } from 'rxjs';
-import { stringify } from 'querystring';
-
-// {
-//   id: Math.random().toString(),
-//     projectId: this.project1Name,
-//       text: "So the thing",
-//         state: TaskState.NotStarted,
-//           description: "Some random thing",
-//             assignedTo: null
-// },
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +20,13 @@ export class TaskService {
       .pipe(flattenDocument);
   }
 
-  addTask(projectId, text: string, description: string, state: TaskState, assignedTo: string) {
+  addTask(
+    projectId,
+    text: string,
+    description: string,
+    state: TaskState,
+    assignedTo: string
+  ) {
     const task: Task = {
       projectId,
       text,

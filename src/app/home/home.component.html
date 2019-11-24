@@ -14,7 +14,10 @@
 
 <div class="container-fluid content-row">
   <div class="row" *ngIf="projects$ | async as projects; else projectLoading">
-    <div *ngFor="let project of projects" class="mt-2 col-sm-12 col-md-6 col-lg-3">
+    <div
+      *ngFor="let project of projects"
+      class="mt-2 col-sm-12 col-md-6 col-lg-3"
+    >
       <div class="card text-white bg-primary o-hidden d-flex h-100">
         <div class="card-body">
           <div class="card-body-icon">
@@ -51,11 +54,16 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Add Project</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-add-project (save)="saveProject($event)"></app-add-project>
+    <app-edit-project (save)="saveProject($event)"></app-edit-project>
   </div>
 </ng-template>
